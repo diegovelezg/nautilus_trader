@@ -26,8 +26,8 @@ jobs:
         run: python build.py
       - name: Wheel
         run: |
-          pip install poetry-core build
-          python -m build --wheel --outdir dist/
+          pip install poetry-core
+          pip wheel . --no-build-isolation --wheel-dir dist/
       - uses: actions/upload-artifact@v4
         with:
           name: nautilus-fractional-wheel
