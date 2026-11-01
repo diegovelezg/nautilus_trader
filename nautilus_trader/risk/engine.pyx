@@ -1056,16 +1056,16 @@ cdef class RiskEngine(Component):
             # Check failed
             return f"quantity {quantity} invalid (precision {quantity._mem.precision} > {instrument.size_precision})"
 
-        # Check alignment to size increment (whole-share venues keep increment=1,
-        # so fractional quantities are denied even when precision allows them)
-        try:
-            instrument.try_normalize_qty(quantity)
-        except Exception:
-            return f"quantity {quantity} invalid (not aligned to size increment {instrument.size_increment})"
-
         # Skip min/max checks for quote quantities (they will be checked in _check_orders_risk using effective_quantity)
         if is_quote_quantity:
             return None
+
+        # Check alignment to size increment (whole-share venues keep increment=1,
+        # so fractional quantities are denied even when precision allows them).
+        # Raw fixed-point modulo: both quantities share the same FIXED scale.
+        cdef object _incr_raw = instrument.size_increment._mem.raw
+        if _incr_raw != 0 and quantity._mem.raw % _incr_raw != 0:
+            return f"quantity {quantity} invalid (not aligned to size increment {instrument.size_increment})"
 
         if instrument.max_quantity and quantity > instrument.max_quantity:
             # Check failed
