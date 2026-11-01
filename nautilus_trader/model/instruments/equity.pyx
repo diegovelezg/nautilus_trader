@@ -101,9 +101,13 @@ cdef class Equity(Instrument):
         str isin: str | None = None,
         str tick_scheme_name = None,
         dict info = None,
+        int size_precision = 0,
+        Quantity size_increment = None,
     ) -> None:
         if isin is not None:
             Condition.valid_string(isin, "isin")
+        cdef Quantity _size_increment = size_increment if size_increment is not None else Quantity.from_int_c(1)
+        Condition.equal(size_precision, _size_increment.precision, "size_precision", "size_increment.precision")
         super().__init__(
             instrument_id=instrument_id,
             raw_symbol=raw_symbol,
@@ -112,9 +116,9 @@ cdef class Equity(Instrument):
             quote_currency=currency,
             is_inverse=False,
             price_precision=price_precision,
-            size_precision=0,  # No fractional units
+            size_precision=size_precision,
             price_increment=price_increment,
-            size_increment=Quantity.from_int_c(1),
+            size_increment=_size_increment,
             multiplier=Quantity.from_int_c(1),
             lot_size=lot_size,
             max_quantity=max_quantity,
@@ -147,6 +151,8 @@ cdef class Equity(Instrument):
             price_precision=values["price_precision"],
             price_increment=Price.from_str(values["price_increment"]),
             lot_size=Quantity.from_str(values["lot_size"]),
+            size_precision=int(values.get("size_precision", 0)),
+            size_increment=Quantity.from_str(values["size_increment"]) if values.get("size_increment") is not None else Quantity.from_int_c(1),
             max_quantity=Quantity.from_str_c(max_q) if max_q is not None else None,
             min_quantity=Quantity.from_str_c(min_q) if min_q is not None else None,
             isin=values.get("isin"),  # Can be None,
@@ -171,6 +177,8 @@ cdef class Equity(Instrument):
             "price_precision": obj.price_precision,
             "price_increment": str(obj.price_increment),
             "lot_size": str(obj.lot_size),
+            "size_precision": obj.size_precision,
+            "size_increment": str(obj.size_increment),
             "isin": obj.isin,
             "margin_init": str(obj.margin_init),
             "margin_maint": str(obj.margin_maint),
@@ -195,6 +203,8 @@ cdef class Equity(Instrument):
             price_precision=pyo3_instrument.price_precision,
             price_increment=Price.from_raw_c(pyo3_instrument.price_increment.raw, pyo3_instrument.price_precision),
             lot_size=Quantity.from_raw_c(pyo3_instrument.lot_size.raw, pyo3_instrument.lot_size.precision) if pyo3_instrument.lot_size is not None else Quantity.from_int_c(1),
+            size_precision=pyo3_instrument.size_precision,
+            size_increment=Quantity.from_raw_c(pyo3_instrument.size_increment.raw, pyo3_instrument.size_increment.precision),
             max_quantity=Quantity.from_raw_c(pyo3_instrument.max_quantity.raw, pyo3_instrument.max_quantity.precision) if pyo3_instrument.max_quantity is not None else None,
             min_quantity=Quantity.from_raw_c(pyo3_instrument.min_quantity.raw, pyo3_instrument.min_quantity.precision) if pyo3_instrument.min_quantity is not None else None,
             margin_init=Decimal(pyo3_instrument.margin_init),

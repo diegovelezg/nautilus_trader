@@ -62,6 +62,10 @@ pub struct Equity {
     pub price_precision: u8,
     /// The minimum price increment (tick size).
     pub price_increment: Price,
+    /// The trading size decimal precision.
+    pub size_precision: u8,
+    /// The minimum size increment.
+    pub size_increment: Quantity,
     /// The initial (order) margin requirement in percentage of order value.
     pub margin_init: Decimal,
     /// The maintenance (position) margin in percentage of position value.
@@ -109,6 +113,8 @@ impl Equity {
         currency: Currency,
         price_precision: u8,
         price_increment: Price,
+        size_precision: u8,
+        size_increment: Quantity,
         lot_size: Option<Quantity>,
         max_quantity: Option<Quantity>,
         min_quantity: Option<Quantity>,
@@ -131,6 +137,13 @@ impl Equity {
             stringify!(price_increment.precision),
         )?;
         check_positive_price(price_increment, stringify!(price_increment))?;
+        check_equal_u8(
+            size_precision,
+            size_increment.precision,
+            stringify!(size_precision),
+            stringify!(size_increment.precision),
+        )?;
+        check_positive_quantity(size_increment, stringify!(size_increment))?;
         check_tick_scheme(tick_scheme)?;
 
         if let Some(lot_size) = lot_size {
@@ -144,6 +157,8 @@ impl Equity {
             currency,
             price_precision,
             price_increment,
+            size_precision,
+            size_increment,
             lot_size,
             max_quantity,
             min_quantity,
@@ -174,6 +189,8 @@ impl Equity {
         currency: Currency,
         price_precision: u8,
         price_increment: Price,
+        size_precision: u8,
+        size_increment: Quantity,
         lot_size: Option<Quantity>,
         max_quantity: Option<Quantity>,
         min_quantity: Option<Quantity>,
@@ -195,6 +212,8 @@ impl Equity {
             currency,
             price_precision,
             price_increment,
+            size_precision,
+            size_increment,
             lot_size,
             max_quantity,
             min_quantity,
@@ -229,6 +248,8 @@ impl Equity {
         currency: Currency,
         price_precision: u8,
         price_increment: Price,
+        size_precision: u8,
+        size_increment: Quantity,
         lot_size: Option<Quantity>,
         max_quantity: Option<Quantity>,
         min_quantity: Option<Quantity>,
@@ -250,6 +271,8 @@ impl Equity {
             currency,
             price_precision,
             price_increment,
+            size_precision,
+            size_increment,
             lot_size,
             max_quantity,
             min_quantity,
@@ -353,7 +376,7 @@ impl Instrument for Equity {
     }
 
     fn size_precision(&self) -> u8 {
-        0
+        self.size_precision
     }
 
     fn price_increment(&self) -> Price {
@@ -361,7 +384,7 @@ impl Instrument for Equity {
     }
 
     fn size_increment(&self) -> Quantity {
-        Quantity::from(1)
+        self.size_increment
     }
 
     fn multiplier(&self) -> Quantity {

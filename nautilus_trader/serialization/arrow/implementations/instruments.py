@@ -309,6 +309,8 @@ SCHEMAS = {
             "currency": pa.dictionary(pa.int16(), pa.string()),
             "price_precision": pa.uint8(),
             "price_increment": pa.dictionary(pa.int16(), pa.string()),
+            "size_precision": pa.uint8(),
+            "size_increment": pa.dictionary(pa.int16(), pa.string()),
             "lot_size": pa.dictionary(pa.int16(), pa.string()),
             "max_quantity": pa.dictionary(pa.int16(), pa.string()),
             "min_quantity": pa.dictionary(pa.int16(), pa.string()),

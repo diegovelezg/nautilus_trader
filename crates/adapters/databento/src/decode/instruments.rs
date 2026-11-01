@@ -191,6 +191,8 @@ pub fn decode_equity(
         currency,
         price_increment.precision,
         price_increment,
+        0, // size_precision (whole shares)
+        Quantity::from(1), // size_increment
         Some(lot_size),
         None, // max_quantity
         None, // min_quantity

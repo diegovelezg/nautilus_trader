@@ -1883,6 +1883,18 @@ impl RiskEngine {
             ));
         }
 
+        // Check alignment to size increment (whole-share venues keep increment=1,
+        // so fractional quantities are denied even when precision allows them)
+        if instrument
+            .try_normalize_qty(quantity_val)
+            .is_err()
+        {
+            return Some(format!(
+                "quantity {quantity_val} invalid (not aligned to size increment {})",
+                instrument.size_increment()
+            ));
+        }
+
         // Skip min/max checks for quote quantities (they will be checked in check_orders_risk using effective_quantity)
         if is_quote_quantity {
             return None;

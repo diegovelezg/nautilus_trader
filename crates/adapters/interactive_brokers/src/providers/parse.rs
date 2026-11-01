@@ -242,6 +242,8 @@ fn parse_equity_contract(
         Currency::from(details.contract.currency.to_string()),
         price_precision,
         Price::new(details.min_tick, price_precision),
+        0,                               // size_precision (whole shares)
+        Quantity::from(1),               // size_increment
         Some(Quantity::new(100.0, 0)),   // Standard lot size for stocks
         None,                            // max_quantity
         None,                            // min_quantity
@@ -988,6 +990,8 @@ fn parse_bond_contract(
         Currency::from(details.contract.currency.to_string()),
         price_precision,
         Price::new(details.min_tick, price_precision),
+        0,                               // size_precision (whole shares)
+        Quantity::from(1),               // size_increment
         Some(Quantity::new(1.0, 0)),     // Standard lot size for bonds
         None,                            // max_quantity
         None,                            // min_quantity

@@ -4300,10 +4300,10 @@ cdef class OrderMatchingEngine:
                     f"invalid delta price precision={delta._mem.order.price.precision} "
                     f"did not match instrument.price_precision={self._price_prec}",
                 )
-            elif delta._mem.order.size.precision != self._size_prec:
+            elif delta._mem.order.size.precision > self._size_prec:
                 raise RuntimeError(
                     f"invalid delta size precision={delta._mem.order.size.precision} "
-                    f"did not match instrument.size_precision={self._size_prec}",
+                    f"exceeds instrument.size_precision={self._size_prec}",
                 )
 
         # L1 books are driven by top-of-book data only, ignore deltas
@@ -4375,10 +4375,10 @@ cdef class OrderMatchingEngine:
                         f"invalid delta price precision={delta._mem.order.price.precision} "
                         f"did not match instrument.price_precision={self._price_prec}",
                     )
-                elif delta._mem.order.size.precision != self._size_prec:
+                elif delta._mem.order.size.precision > self._size_prec:
                     raise RuntimeError(
                         f"invalid delta size precision={delta._mem.order.size.precision} "
-                        f"did not match instrument.size_precision={self._size_prec}",
+                        f"exceeds instrument.size_precision={self._size_prec}",
                     )
 
         # L1 books are driven by top-of-book data only, ignore deltas
@@ -4451,10 +4451,10 @@ cdef class OrderMatchingEngine:
                     f"invalid depth bid price precision={order._mem.price.precision} "
                     f"did not match instrument.price_precision={self._price_prec}",
                 )
-            elif order._mem.size.precision != self._size_prec:
+            elif order._mem.size.precision > self._size_prec:
                 raise RuntimeError(
                     f"invalid depth bid size precision={order._mem.size.precision} "
-                    f"did not match instrument.size_precision={self._size_prec}",
+                    f"exceeds instrument.size_precision={self._size_prec}",
                 )
 
         for order in depth.asks:
@@ -4465,10 +4465,10 @@ cdef class OrderMatchingEngine:
                     f"invalid depth ask price precision={order._mem.price.precision} "
                     f"did not match instrument.price_precision={self._price_prec}",
                 )
-            elif order._mem.size.precision != self._size_prec:
+            elif order._mem.size.precision > self._size_prec:
                 raise RuntimeError(
                     f"invalid depth ask size precision={order._mem.size.precision} "
-                    f"did not match instrument.size_precision={self._size_prec}",
+                    f"exceeds instrument.size_precision={self._size_prec}",
                 )
 
         # Reset consumption tracking on snapshot (F_SNAPSHOT = 32)
@@ -4539,13 +4539,13 @@ cdef class OrderMatchingEngine:
             raise RuntimeError(
                 f"invalid {tick.ask_price.precision=} did not match instrument.price_precision={self._price_prec}",
             )
-        elif tick._mem.bid_size.precision != self._size_prec:
+        elif tick._mem.bid_size.precision > self._size_prec:
             raise RuntimeError(
-                f"invalid {tick.bid_size.precision=} did not match instrument.size_precision={self._size_prec}",
+                f"invalid {tick.bid_size.precision=} exceeds instrument.size_precision={self._size_prec}",
             )
-        elif tick._mem.ask_size.precision != self._size_prec:
+        elif tick._mem.ask_size.precision > self._size_prec:
             raise RuntimeError(
-                f"invalid {tick.ask_size.precision=} did not match instrument.size_precision={self._size_prec}",
+                f"invalid {tick.ask_size.precision=} exceeds instrument.size_precision={self._size_prec}",
             )
 
         if self.book_type == BookType.L1_MBP:
@@ -4612,9 +4612,9 @@ cdef class OrderMatchingEngine:
             raise RuntimeError(
                 f"invalid {tick.price.precision=} did not match instrument.price_precision={self._price_prec}",
             )
-        elif tick._mem.size.precision != self._size_prec:
+        elif tick._mem.size.precision > self._size_prec:
             raise RuntimeError(
-                f"invalid {tick.size.precision=} did not match instrument.size_precision={self._size_prec}",
+                f"invalid {tick.size.precision=} exceeds instrument.size_precision={self._size_prec}",
             )
 
         if self.book_type == BookType.L1_MBP:
@@ -4774,9 +4774,9 @@ cdef class OrderMatchingEngine:
             raise RuntimeError(
                 f"invalid {bar.close.precision=} did not match instrument.price_precision={self._price_prec}",
             )
-        elif bar._mem.volume.precision != self._size_prec:
+        elif bar._mem.volume.precision > self._size_prec:
             raise RuntimeError(
-                f"invalid {bar.volume.precision=} did not match instrument.size_precision={self._size_prec}",
+                f"invalid {bar.volume.precision=} exceeds instrument.size_precision={self._size_prec}",
             )
 
         cdef InstrumentId instrument_id = bar_type.instrument_id

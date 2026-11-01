@@ -38,7 +38,7 @@ impl Equity {
     /// Represents a generic equity instrument.
     #[expect(clippy::too_many_arguments)]
     #[new]
-    #[pyo3(signature = (instrument_id, raw_symbol, currency, price_precision, price_increment, ts_event, ts_init, isin=None, lot_size=None, max_quantity=None, min_quantity=None, max_price=None, min_price=None, margin_init=None, margin_maint=None, maker_fee=None, taker_fee=None, tick_scheme=None, info=None))]
+    #[pyo3(signature = (instrument_id, raw_symbol, currency, price_precision, price_increment, ts_event, ts_init, isin=None, lot_size=None, max_quantity=None, min_quantity=None, max_price=None, min_price=None, margin_init=None, margin_maint=None, maker_fee=None, taker_fee=None, tick_scheme=None, info=None, size_precision=0, size_increment=None))]
     fn py_new(
         instrument_id: InstrumentId,
         raw_symbol: Symbol,
@@ -59,6 +59,8 @@ impl Equity {
         taker_fee: Option<Decimal>,
         tick_scheme: Option<String>,
         info: Option<Py<PyDict>>,
+        size_precision: u8,
+        size_increment: Option<Quantity>,
     ) -> PyResult<Self> {
         // Convert Python dict to Params
         let info_map = if let Some(info_dict) = info {
@@ -74,6 +76,8 @@ impl Equity {
             currency,
             price_precision,
             price_increment,
+            size_precision,
+            size_increment.unwrap_or_else(|| Quantity::from(1)),
             lot_size,
             max_quantity,
             min_quantity,

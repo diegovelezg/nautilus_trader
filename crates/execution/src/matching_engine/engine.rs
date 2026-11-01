@@ -1174,9 +1174,10 @@ impl OrderMatchingEngine {
 
     fn check_size_precision(&self, actual: u8, field: &str) -> anyhow::Result<()> {
         let expected = self.instrument.size_precision();
-        if actual != expected {
+        // Fractional data (precision <= instrument) is accepted; higher precision is skipped
+        if actual > expected {
             anyhow::bail!(
-                "Invalid {field} precision {actual}, expected {expected} for {}",
+                "Invalid {field} precision {actual}, expected at most {expected} for {}",
                 self.instrument.id()
             );
         }

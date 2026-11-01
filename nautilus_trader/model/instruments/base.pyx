@@ -774,26 +774,25 @@ cdef class Instrument(Data):
             If a non zero `value` is rounded to zero due to the instruments size increment or size precision.
 
         """
-        # Check if original_value is greater than zero and rounded_value is "effectively" zero
-        cdef double original_value = float(value)
+        # Exact path via Decimal: float() loses 9dp above ~2^53, so quantize in decimal
+        from decimal import Decimal as _Decimal
+        from decimal import ROUND_DOWN as _ROUND_DOWN
+        from decimal import ROUND_HALF_EVEN as _ROUND_HALF_EVEN
+        cdef object dec_value = value if isinstance(value, _Decimal) else _Decimal(str(value))
+        cdef object inc = _Decimal(str(self.size_increment))
+        cdef object mode = _ROUND_DOWN if round_down else _ROUND_HALF_EVEN
+        cdef object rounded_dec = (dec_value / inc).to_integral_value(rounding=mode) * inc
         cdef double inc_pow10 = self._increment_pow10
-        cdef double rounded_value = 0.0
+        cdef double original_value = float(dec_value)
 
-        if round_down:
-            # Round down to the nearest valid increment
-            rounded_value = floor(original_value / inc_pow10) *inc_pow10
-        else:
-            # Use standard rounding behavior (banker's rounding)
-            rounded_value = round(original_value, self._min_size_increment_precision)
-
-        if original_value > 0 and rounded_value < inc_pow10 * 0.1:
+        if original_value > 0 and float(rounded_dec) < inc_pow10 * 0.1:
             raise ValueError(
                 f"Invalid `value` for quantity: {value} was rounded to zero "
                 f"due to size increment {self.size_increment} "
                 f"and size precision {self.size_precision}",
             )
 
-        return Quantity(rounded_value, precision=self.size_precision)
+        return Quantity.from_str(str(rounded_dec))
 
     cpdef Money notional_value(
         self,

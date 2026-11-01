@@ -890,6 +890,8 @@ impl<'r> FromRow<'r, PgRow> for EquityModel {
             currency,
             price_precision,
             price_increment,
+            0,
+            Quantity::from(1),
             lot_size,
             max_quantity,
             min_quantity,

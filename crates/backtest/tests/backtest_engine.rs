@@ -1142,6 +1142,8 @@ fn option_underlying_equity(venue: Venue) -> InstrumentAny {
         Currency::USD(),
         2,
         Price::from("0.01"),
+        0,
+        Quantity::from(1),
         None,
         None,
         None,

@@ -1776,6 +1776,8 @@ mod tests {
             Currency::from("USD"),
             2,
             Price::from("0.01"),
+            0,
+            Quantity::from(1),
             None,
             None,
             None,
