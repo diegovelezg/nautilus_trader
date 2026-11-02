@@ -151,7 +151,7 @@ cdef class Equity(Instrument):
             price_precision=values["price_precision"],
             price_increment=Price.from_str(values["price_increment"]),
             lot_size=Quantity.from_str(values["lot_size"]),
-            size_precision=int(values.get("size_precision", 0)),
+            size_precision=int(values.get("size_precision") or 0),  # catálogos viejos: columna nula -> 0
             size_increment=Quantity.from_str(values["size_increment"]) if values.get("size_increment") is not None else Quantity.from_int_c(1),
             max_quantity=Quantity.from_str_c(max_q) if max_q is not None else None,
             min_quantity=Quantity.from_str_c(min_q) if min_q is not None else None,
