@@ -792,7 +792,8 @@ cdef class Instrument(Data):
                 f"and size precision {self.size_precision}",
             )
 
-        return Quantity.from_str(str(rounded_dec))
+        # Siempre con la precisión del instrumento: el matching exige leaves_qty.precision == size_precision
+        return Quantity.from_str(f"{rounded_dec:.{self.size_precision}f}")
 
     cpdef Money notional_value(
         self,

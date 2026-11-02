@@ -3,11 +3,14 @@ name: build-fractional-wheel
 on:
   push:
     branches: [equity-fractional]
+    tags: ['v*+frac*']
   workflow_dispatch:
 
 jobs:
   wheel:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -32,3 +35,8 @@ jobs:
         with:
           name: nautilus-fractional-wheel
           path: dist/*.whl
+      - name: Release (solo en tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/*.whl --title "${GITHUB_REF_NAME}" --notes "Wheel Equity fraccionario (ADR-004). cp312 linux_x86_64."
