@@ -7362,7 +7362,7 @@ cdef class OrderMatchingEngine:
                 )
 
             # Validate size precision
-            if fill_qty._mem.precision != self._size_prec:
+            if fill_qty._mem.precision > self._size_prec:
                 raise RuntimeError(
                     f"Invalid size precision for fill {fill_qty.precision} "
                     f"when instrument size precision is {self._size_prec}. "
@@ -7849,7 +7849,7 @@ cdef class OrderMatchingEngine:
         cdef uint8_t size_prec = self._size_prec
 
         # Validate incoming fill precision matches instrument
-        if last_qty._mem.precision != size_prec:
+        if last_qty._mem.precision > size_prec:
             raise RuntimeError(
                 f"Invalid size precision for fill {last_qty._mem.precision} "
                 f"when instrument size precision is {size_prec}; "

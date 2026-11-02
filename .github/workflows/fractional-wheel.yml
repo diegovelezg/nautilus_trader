@@ -39,4 +39,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" dist/*.whl --title "${GITHUB_REF_NAME}" --notes "Wheel Equity fraccionario (ADR-004). cp312 linux_x86_64."
+        run: gh release create "${GITHUB_REF_NAME}" dist/nautilus_trader-*.whl --title "${GITHUB_REF_NAME}" --notes "Wheel Equity fraccionario (ADR-004). cp312 linux_x86_64."
