@@ -3,7 +3,7 @@ name: build-fractional-wheel
 on:
   push:
     branches: [equity-fractional]
-    tags: ['v*+frac*']
+    tags: ['v*frac*']
   workflow_dispatch:
 
 jobs:
